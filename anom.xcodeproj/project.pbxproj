@@ -10,6 +10,7 @@
 		C30219A42689AB5B008DB208 /* WantToDoData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30219A22689AB5B008DB208 /* WantToDoData+CoreDataClass.swift */; };
 		C30219A52689AB5B008DB208 /* WantToDoData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30219A32689AB5B008DB208 /* WantToDoData+CoreDataProperties.swift */; };
 		C30219AC268AE69C008DB208 /* ver2_to_ver1.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = C30219AB268AE69C008DB208 /* ver2_to_ver1.xcmappingmodel */; };
+		C32B7EED268B290300BB78AF /* ver1_to_ver2.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = C32B7EEC268B290300BB78AF /* ver1_to_ver2.xcmappingmodel */; };
 		C3999B402681CE4000F5F3E0 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3999B3F2681CE4000F5F3E0 /* Persistence.swift */; };
 		C3999B432681D18F00F5F3E0 /* anom.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C3999B412681D18F00F5F3E0 /* anom.xcdatamodeld */; };
 		C3999B462681D1CA00F5F3E0 /* MoodData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3999B442681D1C900F5F3E0 /* MoodData+CoreDataClass.swift */; };
@@ -44,6 +45,7 @@
 		C30219A32689AB5B008DB208 /* WantToDoData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WantToDoData+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		C30219A6268ADDD9008DB208 /* anom_ver2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = anom_ver2.xcdatamodel; sourceTree = "<group>"; };
 		C30219AB268AE69C008DB208 /* ver2_to_ver1.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; name = ver2_to_ver1.xcmappingmodel; path = anom.xcdatamodeld/ver2_to_ver1.xcmappingmodel; sourceTree = "<group>"; };
+		C32B7EEC268B290300BB78AF /* ver1_to_ver2.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = ver1_to_ver2.xcmappingmodel; sourceTree = "<group>"; };
 		C3999B3F2681CE4000F5F3E0 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		C3999B422681D18F00F5F3E0 /* anom.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = anom.xcdatamodel; sourceTree = "<group>"; };
 		C3999B442681D1C900F5F3E0 /* MoodData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MoodData+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 				C3999B442681D1C900F5F3E0 /* MoodData+CoreDataClass.swift */,
 				C3999B452681D1C900F5F3E0 /* MoodData+CoreDataProperties.swift */,
 				C3999B412681D18F00F5F3E0 /* anom.xcdatamodeld */,
+				C32B7EEC268B290300BB78AF /* ver1_to_ver2.xcmappingmodel */,
 				C3EE33B8265DE98F0058AEB4 /* anom */,
 				C3EE33CA265DE9910058AEB4 /* anomTests */,
 				C3EE33D5265DE9920058AEB4 /* anomUITests */,
@@ -283,6 +286,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C3999B432681D18F00F5F3E0 /* anom.xcdatamodeld in Sources */,
+				C32B7EED268B290300BB78AF /* ver1_to_ver2.xcmappingmodel in Sources */,
 				C30219A42689AB5B008DB208 /* WantToDoData+CoreDataClass.swift in Sources */,
 				C3999B462681D1CA00F5F3E0 /* MoodData+CoreDataClass.swift in Sources */,
 				C3999B472681D1CA00F5F3E0 /* MoodData+CoreDataProperties.swift in Sources */,
@@ -618,7 +622,7 @@
 				C30219A6268ADDD9008DB208 /* anom_ver2.xcdatamodel */,
 				C3999B422681D18F00F5F3E0 /* anom.xcdatamodel */,
 			);
-			currentVersion = C3999B422681D18F00F5F3E0 /* anom.xcdatamodel */;
+			currentVersion = C30219A6268ADDD9008DB208 /* anom_ver2.xcdatamodel */;
 			path = anom.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

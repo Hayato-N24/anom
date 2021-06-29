@@ -81,13 +81,13 @@ struct WantToDo: View{
                     TextField("明日やりたいことを記入してください", text:$newItem).textFieldStyle(RoundedBorderTextFieldStyle()).frame(width:300)
                     
                     Button(action:{
-                        /*dateFormatter.dateFormat = "yyyy/M/d"
+                        dateFormatter.dateFormat = "yyyy/M/d"
                         dateFormatter.dateStyle = .short
-                        dateFormatter.timeStyle = .none*/
+                        dateFormatter.timeStyle = .none
 
                         
                         if(self.newItem != ""){
-                           //formatedDate = dateFormatter.string(from: selectedDate)
+                           formatedDate = dateFormatter.string(from: selectedDate)
                             self.addItem(date:formatedDate, wantToDo:self.newItem)
                             self.newItem = ""
                         }
