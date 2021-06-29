@@ -82,7 +82,8 @@ struct WantToDo: View{
                     
                     Button(action:{
                         dateFormatter.dateFormat = "yyyy/M/d"
-                        dateFormatter.dateStyle = .short
+                        dateFormatter.locale = Locale(identifier: "ja_JP")
+                        dateFormatter.dateStyle = .full
                         dateFormatter.timeStyle = .none
 
                         
@@ -122,12 +123,9 @@ struct WantToDo: View{
                             Text("\(wantToDo.date!)")
                             Text("\(wantToDo.wantToDo!)")
                             Image(systemName: wantToDo.checked ? "checkmark.circle.fill" : "circle")
-                            
-                            Spacer()
-                            
+                                                        
                         }
                         
-                        Spacer()
                         
                     }
                 }
