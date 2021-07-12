@@ -123,6 +123,10 @@ struct WantToDo: View{
                             Text("\(wantToDo.date!)")
                             Text("\(wantToDo.wantToDo!)")
                             Image(systemName: wantToDo.checked ? "checkmark.circle.fill" : "circle")
+                                .onTapGesture {
+                                    if wantToDo.checked { wantToDo.checked = false }
+                                    else{ wantToDo.checked = true}
+                            }
                                                         
                         }
                         
