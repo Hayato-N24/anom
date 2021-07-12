@@ -9,32 +9,38 @@ import SwiftUI
 
 
 struct ContentView: View {
-    @State var sheetPresented = false
+    
     @State var WantToDoSheet = false
     
-    var clManagerX = CLManager(calendar: Calendar.current, minimumDate: Date(), maximumDate: Date().addingTimeInterval(60*60*24*365))
+    
+    var clManagerX = CLManager(calendar: Calendar.current, minimumDate: Date().addingTimeInterval(-60*60*24*365/2), maximumDate: Date().addingTimeInterval(60*60*24*365/2))
     
     var body: some View {
         
-        VStack (spacing: 15) {
-            
-            Button(action: { self.sheetPresented.toggle() }) {
-                Text("Mood Tracker").foregroundColor(.blue)
-            }
-            .font(.largeTitle)
-            .sheet(isPresented: self.$sheetPresented, content: {
-                    CLViewController(isPresented: self.$sheetPresented, clManager: self.clManagerX)})
-            Text(self.getTextFromDate(date: self.clManagerX.selectedDate))
-            
-            
-            Button(action: { self.WantToDoSheet.toggle() }) {
-                Text("Write Want to do").foregroundColor(.blue)
-            }
-            .font(.largeTitle)
-            .sheet(isPresented: self.$WantToDoSheet, content: {
-                    WantToDo()})
-            
-        }
+        
+        CLViewController(clManager: self.clManagerX)
+        
+        
+        
+        /*VStack (spacing: 15) {
+         
+         Button(action: { self.sheetPresented.toggle() }) {
+         Text("Mood Tracker").foregroundColor(.blue)
+         }
+         .font(.largeTitle)
+         .sheet(isPresented: self.$sheetPresented, content: {
+         CLViewController(isPresented: self.$sheetPresented, clManager: self.clManagerX)})
+         Text(self.getTextFromDate(date: self.clManagerX.selectedDate))
+         
+         
+         Button(action: { self.WantToDoSheet.toggle() }) {
+         Text("Write Want to do").foregroundColor(.blue)
+         }
+         .font(.largeTitle)
+         .sheet(isPresented: self.$WantToDoSheet, content: {
+         WantToDo()})*/
+        
+        
         
     }
     
@@ -54,8 +60,8 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-//WantToDoView
-struct WantToDo: View{
+//InputWantToDoView
+struct InputWantToDo: View{
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.managedObjectContext) private var viewContext
     @State var newItem:String = ""
@@ -73,7 +79,7 @@ struct WantToDo: View{
     
     var body: some View{
         
-                
+        
         NavigationView{
             VStack{
                 
@@ -85,10 +91,10 @@ struct WantToDo: View{
                         dateFormatter.locale = Locale(identifier: "ja_JP")
                         dateFormatter.dateStyle = .full
                         dateFormatter.timeStyle = .none
-
+                        
                         
                         if(self.newItem != ""){
-                           formatedDate = dateFormatter.string(from: selectedDate)
+                            formatedDate = dateFormatter.string(from: selectedDate)
                             self.addItem(date:formatedDate, wantToDo:self.newItem)
                             self.newItem = ""
                         }
@@ -126,8 +132,8 @@ struct WantToDo: View{
                                 .onTapGesture {
                                     if wantToDo.checked { wantToDo.checked = false }
                                     else{ wantToDo.checked = true}
-                            }
-                                                        
+                                }
+                            
                         }
                         
                         
@@ -167,7 +173,87 @@ struct WantToDo: View{
         }
     }//addItem
 }
-//WantToDoView
+//InputWantToDoView
+
+struct ShowWantToDoList: View{
+    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.managedObjectContext) private var viewContext
+    @State var newItem:String = ""
+    @State var selectedDate = Date().addingTimeInterval(60*60*24)
+    @State var formatedDate = "yyyy/M/d"
+    let dateFormatter = DateFormatter()
+    
+    
+    @FetchRequest(
+        entity: WantToDoData.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \WantToDoData.date, ascending: true)],
+        predicate: nil,
+        animation: .default
+    ) private var wantToDoData: FetchedResults<WantToDoData>
+    
+    var body: some View{
+        
+        
+        NavigationView{
+            VStack{
+                
+                HStack{
+                    Text("やりたいことリスト").font(.title).padding(.leading)
+                    Spacer()
+                }
+                List{
+                    ForEach(wantToDoData){wantToDo in
+                        
+                        HStack{
+                            Text("\(wantToDo.date!)")
+                            Text("\(wantToDo.wantToDo!)")
+                            Image(systemName: wantToDo.checked ? "checkmark.circle.fill" : "circle")
+                                .onTapGesture {
+                                    if wantToDo.checked { wantToDo.checked = false }
+                                    else{ wantToDo.checked = true}
+                                }
+                            
+                        }
+                        
+                        
+                    }
+                }
+            }
+            .navigationBarItems(trailing:  Button(action:{
+                self.presentationMode.wrappedValue.dismiss()
+            })
+            {
+                Text("閉じる")
+            })
+            .navigationBarTitle("明日やりたいことの追加")
+        }
+        //navigation view
+    }
+    //body:some view
+    
+    
+    private func addItem(date:String,wantToDo:String) {
+        withAnimation {
+            /// 新規レコードの作成
+            let newItem = WantToDoData(context: viewContext)
+            newItem.date = date
+            newItem.wantToDo = wantToDo
+            newItem.checked = false
+            
+            /// データベースの保存
+            do {
+                try viewContext.save()
+            } catch {
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            }
+        }
+    }//addItem
+}
+//ShowWantToDoViewList
+
 
 
 //InputMoodView
@@ -207,6 +293,7 @@ struct InputMood:View{
                     ForEach(0..<colors.count){ num in
                         Button(action:{
                             self.addItem(date: clManager.selectedDate, mood: num)
+                            self.presentationMode.wrappedValue.dismiss()
                             
                         }){
                             
@@ -346,12 +433,7 @@ struct CLDate{
         return fontWeight
     }
     
-    /*func getColor() -> Color? {
-     let col = Color.black
-     
-     
-     return col
-     }*/
+    
     
     
     
@@ -389,20 +471,36 @@ struct CLDate{
 
 //CLViewController
 struct CLViewController: View{
-    @Binding var isPresented:Bool
     @ObservedObject var clManager:CLManager
     @Environment(\.managedObjectContext) private var viewContext
     
+    
     var body: some View{
-        Group{
-            List{
-                ForEach( 0..<numberOfMonths() ){
-                    index in CLMonth( isPresented:self.$isPresented, clManager:clManager, monthOffset:index)
+        
+        NavigationView{
+            ScrollViewReader{ proxy in
+                
+                List{
+                    ForEach( 0..<numberOfMonths()){
+                        index in CLMonth(clManager:clManager, monthOffset:index).id(index)
+                    }
+                    
+                }.listStyle(InsetListStyle())
+                
+                .toolbar{
+                    ToolbarItem(placement: .navigationBarLeading){
+                        Button(action: { proxy.scrollTo(6, anchor: .center)}){
+                            Text("今日に戻る")
+                        }
+                    }
                 }
-                Divider()
             }
         }
     }
+    
+    
+    
+    
     
     func numberOfMonths() -> Int {
         return clManager.calendar.dateComponents(
@@ -416,6 +514,7 @@ struct CLViewController: View{
         components.day = 0
         return clManager.calendar.date( from:components )!
     }
+    
 }
 //CLViewController
 
@@ -457,7 +556,6 @@ class CLManager : ObservableObject {
 //CLMonth
 struct CLMonth: View {
     
-    @Binding var isPresented: Bool
     @ObservedObject var clManager: CLManager
     @State var showInputMoodSheet: Bool = false
     @Environment(\.managedObjectContext) private var viewContext
@@ -471,39 +569,41 @@ struct CLMonth: View {
     
     let cellWidth = CGFloat(32)
     
-    //@State var showTime = false
+    
     
     var body: some View {
-        ScrollView(.horizontal){
-            VStack(alignment: HorizontalAlignment.center, spacing: 10){
-                Text(getMonthHeader())
-                VStack(alignment: .leading, spacing: 5) {
-                    ForEach(monthsArray, id: \.self) { row in
-                        HStack() {
-                            ForEach(row, id: \.self) { column in
-                                HStack() {
-                                    Spacer()
-                                    if self.isThisMonth(date: column) {
-                                        CLCell(clDate: CLDate(
-                                            date: column,
-                                            clManager: self.clManager,
-                                            isToday: self.isToday(date: column),
-                                            isSelected: self.isSpecialDate(date: column),
-                                            inputMood: InputMood( clManager: clManager)
-                                        ),
-                                        cellWidth: self.cellWidth)
-                                        .onTapGesture { self.dateTapped(date: column)
-                                            showInputMoodSheet = true
-                                        }
-                                        .sheet(isPresented: self.$showInputMoodSheet, content: {InputMood(
-                                                clManager: clManager)})
-                                    } else {
-                                        Text("").frame(width: self.cellWidth, height: self.cellWidth)
+        VStack(alignment: HorizontalAlignment.center,spacing: 10){
+            Text(getMonthHeader())
+            VStack(alignment: .leading, spacing: 5) {
+                ForEach(monthsArray, id: \.self) { row in
+                    HStack() {
+                        ForEach(row, id: \.self) { column in
+                            HStack() {
+                                Spacer()
+                                if self.isThisMonth(date: column) {
+                                    CLCell(clDate: CLDate(
+                                        date: column,
+                                        clManager: self.clManager,
+                                        isToday: self.isToday(date: column),
+                                        isSelected: self.isSpecialDate(date: column),
+                                        inputMood: InputMood( clManager: clManager)
+                                    ),
+                                    cellWidth: self.cellWidth)
+                                    .onTapGesture {
+                                        self.dateTapped(date: column)
+                                        showInputMoodSheet = true
                                     }
-                                    Spacer()
+                                    .sheet(isPresented: self.$showInputMoodSheet, content: {InputMood(
+                                            clManager: clManager)})
+                                } else {
+                                    Text("").frame(width: self.cellWidth, height: self.cellWidth)
                                 }
+                                Spacer()
+                                
                             }
+                            
                         }
+                        
                     }
                 }
             }
