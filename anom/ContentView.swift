@@ -9,39 +9,10 @@ import SwiftUI
 
 
 struct ContentView: View {
-    
-    @State var WantToDoSheet = false
-    
-    
     var clManagerX = CLManager(calendar: Calendar.current, minimumDate: Date().addingTimeInterval(-60*60*24*365/2), maximumDate: Date().addingTimeInterval(60*60*24*365/2))
     
     var body: some View {
-        
-        
         CLViewController(clManager: self.clManagerX)
-        
-        
-        
-        /*VStack (spacing: 15) {
-         
-         Button(action: { self.sheetPresented.toggle() }) {
-         Text("Mood Tracker").foregroundColor(.blue)
-         }
-         .font(.largeTitle)
-         .sheet(isPresented: self.$sheetPresented, content: {
-         CLViewController(isPresented: self.$sheetPresented, clManager: self.clManagerX)})
-         Text(self.getTextFromDate(date: self.clManagerX.selectedDate))
-         
-         
-         Button(action: { self.WantToDoSheet.toggle() }) {
-         Text("Write Want to do").foregroundColor(.blue)
-         }
-         .font(.largeTitle)
-         .sheet(isPresented: self.$WantToDoSheet, content: {
-         WantToDo()})*/
-        
-        
-        
     }
     
     func getTextFromDate(date: Date!) -> String {
@@ -336,15 +307,38 @@ struct AboutAnom:View{
                     Spacer()
                     Group{
                         Text("anomの目的").font(.headline)
-                    }
+                        Text("anomは自律的な行動を増やすことで、気持ちを前向きにしたりメンタルを安定させたりすることを目的にしたアプリです。").font(.body)
+                        Text("では自律的な行動とはどのようなものでしょうか。anomでは自己決定理論に基づいて、興味関心や楽しいといったポジティブな感情による行動、本人が重要だと認識して受け入れている行動を自律的な行動と捉えています。").font(.body)
+                        Text("実際に自律性や自己決定と幸福感やwell-being、ポジティブな感情などとの関係を示す研究もあります。*1").font(.body)
+                        Text("anomのこうした考えを頭の隅に置きながらアプリを使ってみてください。").font(.body)
+                    }.padding(15)
+                    
                     Spacer()
                     Group{
                         Text("やりたいことを記録する").font(.headline)
-                    }
+                        Text("anomでは、次の日にやりたいことを記録できます。ここで注意して欲しいのはやるべきこと(need)ではなくやりたいこと(want)を書くということです。").font(.body)
+                        Text("この時なにをやるかは重要ではありません。自分のやりたいことを自分でやると決めて実際にやる。このことが重要です。").font(.body)
+                        Text("例えば、明日はひたすらダラダラすると決めて実際にダラダラできたら、それも自律的な行動と言えるのではないでしょうか。").font(.body)
+                        Text("具体的な記録手順は以下の通りです。\n1.ホーム画面下部のメニュバーから「やりたいことを書く」ボタンを押す\n2.次の日にやりたいことを記入する\n3.記入したことができたら「一覧」からやったことにチェックをつける").font(.body)
+                        Text("anomを使うことで日々の生活の中で自律的な行動を意識してみましょう。").font(.body)
+                        
+                    }.padding(15)
                     Spacer()
                     Group{
                         Text("気分を記録する").font(.headline)
-                    }
+                        Text("anomではやりたいことだけでなく、日々の気分も記録できます。").font(.body)
+                        Text("具体的な手順は以下の通りです。\n1.ホーム画面で記録する日をタップ\n2.その日の気分を5段階で記録").font(.body)
+                        Text("やりたいことの記録と合わせて気分も記録することで、自分がどんなことをやった日に気分が良かったのか内省するヒントになれば幸いです。").font(.body)
+                    }.padding(15)
+                    
+                    Spacer(minLength: 30)
+                    Group{
+                        Text("*1 自律性と精神面の関連を示す研究として以下のような論文が存在する").font(.caption2)
+                        Text("TANG, M., WANG, D. and GUERRIEN, A., 2020. A systematic review and meta‐analysis on basic psychological need satisfaction, motivation, and well‐being in later life: Contributions of self‐determination theory. PsyCh journal (Victoria, Australia), 9(1), pp. 5-33.\n").font(.caption2)
+                        Text("譚, 紅, 渡邉, 勉, 今野, 裕, HONGYAN, T., TSUTOMU, W., HIROYUKI, K., MEJIRO UNIVERSITY, GRADUATE SCHOOL OF PSYCHOLOGY and MEJIRO UNIVERSITY, FACULTY OF HUMAN SCIENCES, 2010. 動機づけの自己決定性が在日中国人留学生の主観的幸福感および学習・生活への適応に及ぼす影響. 目白大学心理学研究 = Mejiro journal of psychology, 6, pp. 43-54.\n").font(.caption2)
+                        Text("西村 和雄,八木 匡,2018,幸福感と自己決定―日本における実証研究 RIETI Discussion Paper Series 18-J-026\n").font(.caption2)
+                    }.padding(1)
+
                     
                 }
             }
