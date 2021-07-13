@@ -72,7 +72,7 @@ struct InputWantToDo: View{
     
     @FetchRequest(
         entity: WantToDoData.entity(),
-        sortDescriptors: [NSSortDescriptor(keyPath: \WantToDoData.date, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \WantToDoData.date, ascending: false)],
         predicate: nil,
         animation: .default
     ) private var wantToDoData: FetchedResults<WantToDoData>
@@ -91,6 +91,7 @@ struct InputWantToDo: View{
                         dateFormatter.locale = Locale(identifier: "ja_JP")
                         dateFormatter.dateStyle = .full
                         dateFormatter.timeStyle = .none
+                        // self.deleteAllData()
                         
                         
                         if(self.newItem != ""){
@@ -117,9 +118,9 @@ struct InputWantToDo: View{
                     }.labelsHidden()
                 }
                 
-                
+                Spacer(minLength: 50)
                 HStack{
-                    Text("明日やりたいこと").font(.title).padding(.leading)
+                    Text("やりたいこと一覧").font(.title).padding(.leading)
                     Spacer()
                 }
                 List{
@@ -152,6 +153,15 @@ struct InputWantToDo: View{
     }
     //body:some view
     
+    
+    func deleteAllData() {
+        var c = 0
+        for _ in wantToDoData {
+            viewContext.delete(wantToDoData[c])
+            c += 1
+        }
+        try? viewContext.save()
+    }
     
     private func addItem(date:String,wantToDo:String) {
         withAnimation {
@@ -175,32 +185,25 @@ struct InputWantToDo: View{
 }
 //InputWantToDoView
 
+
+//ShowWantToDoListView
 struct ShowWantToDoList: View{
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.managedObjectContext) private var viewContext
-    @State var newItem:String = ""
-    @State var selectedDate = Date().addingTimeInterval(60*60*24)
-    @State var formatedDate = "yyyy/M/d"
-    let dateFormatter = DateFormatter()
+    
     
     
     @FetchRequest(
         entity: WantToDoData.entity(),
-        sortDescriptors: [NSSortDescriptor(keyPath: \WantToDoData.date, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \WantToDoData.date, ascending: false)],
         predicate: nil,
         animation: .default
     ) private var wantToDoData: FetchedResults<WantToDoData>
     
     var body: some View{
         
-        
         NavigationView{
             VStack{
-                
-                HStack{
-                    Text("やりたいことリスト").font(.title).padding(.leading)
-                    Spacer()
-                }
                 List{
                     ForEach(wantToDoData){wantToDo in
                         
@@ -225,34 +228,14 @@ struct ShowWantToDoList: View{
             {
                 Text("閉じる")
             })
-            .navigationBarTitle("明日やりたいことの追加")
+            .navigationBarTitle("やりたいこと一覧")
         }
         //navigation view
     }
     //body:some view
     
-    
-    private func addItem(date:String,wantToDo:String) {
-        withAnimation {
-            /// 新規レコードの作成
-            let newItem = WantToDoData(context: viewContext)
-            newItem.date = date
-            newItem.wantToDo = wantToDo
-            newItem.checked = false
-            
-            /// データベースの保存
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }//addItem
 }
-//ShowWantToDoViewList
+//ShowWantToDoListView
 
 
 
@@ -341,6 +324,41 @@ struct InputMood:View{
     }
 }
 //InputMoodView
+
+//AboutAnomView
+struct AboutAnom:View{
+    @Environment (\.presentationMode) var presentationMode
+    var body: some View{
+        NavigationView{
+            ScrollView(.vertical){
+                VStack{
+                    Text("anomの使い方").font(.title)
+                    Spacer()
+                    Group{
+                        Text("anomの目的").font(.headline)
+                    }
+                    Spacer()
+                    Group{
+                        Text("やりたいことを記録する").font(.headline)
+                    }
+                    Spacer()
+                    Group{
+                        Text("気分を記録する").font(.headline)
+                    }
+                    
+                }
+            }
+            .navigationBarItems(trailing:  Button(action:{
+                self.presentationMode.wrappedValue.dismiss()
+            })
+            {
+                Text("閉じる")
+            })
+        }
+       
+    }
+}
+//AboutAnomView
 
 //CLCell
 struct CLCell:View{
@@ -473,6 +491,10 @@ struct CLDate{
 struct CLViewController: View{
     @ObservedObject var clManager:CLManager
     @Environment(\.managedObjectContext) private var viewContext
+    @State var showInputWantToDoSheet: Bool = false
+    @State var showWantToDoListSheet: Bool = false
+    @State var showAboutAnomSheet: Bool = false
+    @State var thismon: Int = 0
     
     
     var body: some View{
@@ -483,6 +505,7 @@ struct CLViewController: View{
                 List{
                     ForEach( 0..<numberOfMonths()){
                         index in CLMonth(clManager:clManager, monthOffset:index).id(index)
+                        
                     }
                     
                 }.listStyle(InsetListStyle())
@@ -490,10 +513,42 @@ struct CLViewController: View{
                 .toolbar{
                     ToolbarItem(placement: .navigationBarLeading){
                         Button(action: { proxy.scrollTo(6, anchor: .center)}){
-                            Text("今日に戻る")
+                            Text("今月")
                         }
                     }
+                    
+                    ToolbarItemGroup(placement: .bottomBar){
+                       // HStack{
+                        Spacer(minLength:10)
+                            Button( action: {self.showWantToDoListSheet.toggle()} ){
+                                VStack{
+                                    Image(systemName: "doc.text").font(.title)
+                                    Text("一覧").font(.caption)
+                                }
+                            }.sheet( isPresented: $showWantToDoListSheet, content: {ShowWantToDoList()} )
+                            
+                            Spacer()
+                            Button( action: {self.showInputWantToDoSheet.toggle()} ){
+                                VStack{
+                                    Image(systemName: "pencil").font(.title)
+                                    Text("やりたいことを書く").font(.caption)
+                                }
+                            }.sheet( isPresented: $showInputWantToDoSheet, content: {InputWantToDo()} )
+                            
+                            Spacer()
+                            Button( action: {self.showAboutAnomSheet.toggle()} ){
+                                VStack{
+                                    Image(systemName: "book").font(.title)
+                                    Text("使い方").font(.caption)
+                                }
+                            }.sheet( isPresented: $showAboutAnomSheet, content: {AboutAnom()} )
+                        Spacer(minLength:10)
+                        //}
+                    }
                 }
+                
+                .navigationBarTitle("anom", displayMode: .inline)
+               
             }
         }
     }
