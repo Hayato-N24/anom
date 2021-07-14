@@ -185,6 +185,7 @@ struct ShowWantToDoList: View{
                                 .onTapGesture {
                                     if wantToDo.checked { wantToDo.checked = false }
                                     else{ wantToDo.checked = true}
+                                    try? viewContext.save()
                                 }
                             
                         }
@@ -215,6 +216,7 @@ struct InputMood:View{
     @Environment (\.presentationMode) var presentationMode
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var clManager:CLManager
+    @State var showAlert: Bool = false
     
     @FetchRequest(
         entity: MoodData.entity(),
@@ -246,18 +248,30 @@ struct InputMood:View{
                 HStack{
                     ForEach(0..<colors.count){ num in
                         Button(action:{
+                            
                             self.addItem(date: clManager.selectedDate, mood: num)
-                            self.presentationMode.wrappedValue.dismiss()
+                            
+                            self.showAlert = true
+                            
                             
                         }){
                             
                             Circle()
                                 .frame(width:50, height:50)
                                 .foregroundColor(colors[num])
+                                
+                        }.alert( isPresented: $showAlert){
+                            Alert(title: Text("気分を記録しました！"),
+                            message: Text("今日の気分を踏まえて明日やりたいことを書いてみましょう"))
                         }
                     }
                 }
-            }
+            } .navigationBarItems(trailing:  Button(action:{
+                self.presentationMode.wrappedValue.dismiss()
+            })
+            {
+                Text("閉じる")
+            })
         }
     }
     
@@ -309,8 +323,8 @@ struct AboutAnom:View{
                         Text("anomの目的").font(.headline)
                         Text("anomは自律的な行動を増やすことで、気持ちを前向きにしたりメンタルを安定させたりすることを目的にしたアプリです。").font(.body)
                         Text("では自律的な行動とはどのようなものでしょうか。anomでは自己決定理論に基づいて、興味関心や楽しいといったポジティブな感情による行動、本人が重要だと認識して受け入れている行動を自律的な行動と捉えています。").font(.body)
-                        Text("実際に自律性や自己決定と幸福感やwell-being、ポジティブな感情などとの関係を示す研究もあります。*1").font(.body)
-                        Text("anomのこうした考えを頭の隅に置きながらアプリを使ってみてください。").font(.body)
+                        Text("実際に自律性と幸福感やwell-beingなどとの関係を示す研究もあります。*1").font(.body)
+                        Text("こうしたanomの制作背景を頭の隅に置きながらアプリを使ってみてください。").font(.body)
                     }.padding(15)
                     
                     Spacer()
@@ -327,7 +341,7 @@ struct AboutAnom:View{
                     Group{
                         Text("気分を記録する").font(.headline)
                         Text("anomではやりたいことだけでなく、日々の気分も記録できます。").font(.body)
-                        Text("具体的な手順は以下の通りです。\n1.ホーム画面で記録する日をタップ\n2.その日の気分を5段階で記録").font(.body)
+                        Text("具体的な手順は以下の通りです。\n1.ホーム画面で記録する日付をタップ\n2.その日の気分を5段階で記録").font(.body)
                         Text("やりたいことの記録と合わせて気分も記録することで、自分がどんなことをやった日に気分が良かったのか内省するヒントになれば幸いです。").font(.body)
                     }.padding(15)
                     
