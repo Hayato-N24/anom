@@ -62,7 +62,7 @@ struct InputWantToDo: View{
                         dateFormatter.locale = Locale(identifier: "ja_JP")
                         dateFormatter.dateStyle = .full
                         dateFormatter.timeStyle = .none
-                        // self.deleteAllData()
+                        
                         
                         
                         if(self.newItem != ""){
@@ -124,7 +124,7 @@ struct InputWantToDo: View{
     }
     //body:some view
     
-    
+    /*
     func deleteAllData() {
         var c = 0
         for _ in wantToDoData {
@@ -132,7 +132,7 @@ struct InputWantToDo: View{
             c += 1
         }
         try? viewContext.save()
-    }
+    }*/
     
     private func addItem(date:String,wantToDo:String) {
         withAnimation {
@@ -146,8 +146,6 @@ struct InputWantToDo: View{
             do {
                 try viewContext.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
@@ -283,15 +281,17 @@ struct InputMood:View{
     
     
     private func addItem(date:Date,mood:Int) {
-        var c = 0
         for md in moodData{
             if md.dateKey == date{
-                viewContext.delete(moodData[c])
+                md.mood = Int64(mood)
+                try! viewContext.save()
+                return
+                
             }
-            c += 1
+           
         }
         withAnimation {
-            /// 新規レコードの作成
+            // 新規レコードの作成
             let newItem = MoodData(context: viewContext)
             newItem.dateKey = date
             newItem.mood = Int64(mood)
@@ -300,8 +300,7 @@ struct InputMood:View{
             do {
                 try viewContext.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+               
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
